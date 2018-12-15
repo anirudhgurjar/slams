@@ -98,7 +98,7 @@ export default {
   methods: {
     loadData() {
       http
-        .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+        .psot('https://slamsbox.com/api/find_activities')
         .then(response => (this.searchresults = response.data))
         .catch(e => {
           this.errors.push(e);
