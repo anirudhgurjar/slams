@@ -98,7 +98,7 @@ export default {
   methods: {
     loadData() {
       http
-        .psot('https://slamsbox.com/api/find_activities')
+        .post('https://slamsbox.com/api/find_activities')
         .then(response => (this.searchresults = response.data))
         .catch(e => {
           this.errors.push(e);
