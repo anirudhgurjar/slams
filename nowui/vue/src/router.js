@@ -8,6 +8,7 @@ import MainNavbar from './layout/MainNavbar.vue';
 import MainFooter from './layout/MainFooter.vue';
 import SLanding from './pages/SLanding.vue';
 import Sresults from './pages/SResults.vue';
+import Slisting from './pages/SListing.vue';
 import Menu from './pages/Menu.vue';
 
 Vue.use(Router);
@@ -58,6 +59,13 @@ export default new Router({
       path: '/sresults',
       name: 'sresults',
       components: { default: Sresults, header:Menu },
+      props : {
+        addressData:{}
+      },
+    }, {
+      path: '/slisting',
+      name: 'slisting',
+      components: { default: Slisting, header:Menu },
       props : {
         addressData:{}
       },
