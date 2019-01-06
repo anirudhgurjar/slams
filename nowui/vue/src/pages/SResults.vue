@@ -1,24 +1,56 @@
 <template>
-      <div class="container">
-          <div class="card" v-for="category in dummyResponse.data"> 
+      <div class="container-fluid">
+           <div class="header">
+      <h5 style="font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto,
+    'Helvetica Neue', sans-serif !important;">Found {{searchresults.length}} Activites Near :&nbsp;<strong>{{this.addressData}}</strong></h5>
+
+    
+    </div>
+          <div v-for="category in searchresults"> 
           <div class="card-body">
           <div class="panel-heading">
-            <h2>{{category.categoryName}}</h2>
+            <h4><strong>{{category.categoryName}}</strong></h4>
           </div>
-          <div v-for="subCategory in category.subCateGory" class="card" style="width: 12rem;padding:2px;">
-            <img class="card-img-top" v-bind:src="getImgUrl(subCategory.img)" alt="desc">
-            <div class="card-footer">
-              <h5 class="card-title">{{subCategory.name}}</h5>
-            </div>
-          </div>
+          <subCateGory v-bind:categoryId="category.id"/>
+
         </div>
         </div>
+        <!-- Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+
+
+
+
 </template>
 <script>
 import http from 'axios';
+import subCateGory from './SListing';
+import dh from './endpoints.js';
+
 
 export default {
+  components: {
+    subCateGory
+  },
   
   data() {
     return {
@@ -91,17 +123,23 @@ export default {
   },
   mounted() {
     this.loadData();
+    if(!this.searchresults || this.searchresults.length==0){
+      $('#alertModal').modal('show');
+    }
   },
   created() {
             this.addressData = this.$route.params.addressData;
         },
   methods: {
     loadData() {
+      console.log('dh=' + (this.addressData));
       http
-        .post('https://slamsbox.com/api/find_activities')
-        .then(response => (this.searchresults = response.data))
+        .get('http://slamsbox-server.herokuapp.com/search/city/' + this.addressData)
+        .then( (response)=> {
+          this.searchresults = response.data;
+        })
         .catch(e => {
-          this.errors.push(e);
+          //this.errors.push(e);
           console.log("Errors" + e);
         });
     },getImgUrl(pic) {
@@ -127,5 +165,13 @@ export default {
    width: 50%;
     height: 10vw;
     object-fit: fill; 
+}
+
+.h4{
+  font-family: 'Arial Black", Gadget, sans-serif';
+}
+
+.starter-page {
+  min-height: calc(100vh - 95px);
 }
 </style>

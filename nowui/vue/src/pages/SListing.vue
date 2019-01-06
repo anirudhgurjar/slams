@@ -1,27 +1,34 @@
 <template>
   <div class="container">
-    <div class="header">
-      <h5 style="font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto,
-    'Helvetica Neue', sans-serif !important;">Activites Near :&nbsp;<strong>Brampton</strong></h5>
-    </div>
-    
-               
-            <!--/sidebar-nav-fixed -->
-    <div v-for="category in dummyResponse.data" class="myPanel" style="max-width: 42rem;">
+    <!--/sidebar-nav-fixed -->
+    <div v-for="category in searchresults" class="myPanel" style="max-width: 42rem;">
       <div class="row">
         <div class="col-md-5">
-          <img src="http://lorempixel.com/850/850/?random=123">
+          <img v-bind:src="category.logoURL">
         </div>
         <div class="col-md-6">
           <div class="row">
             <div class="lib-header-seperator"></div>
-            <h2 class="header-font">Karate Kid</h2>
+            <h2 class="header-font">{{category.name}}</h2>
           </div>
-           <div class="row" style="padding-top: 20px">
-              The Ultimate karate classes for kids in your neighbourhood.{{category.categoryName}}
-            </div>
+          <div class="row" style="padding-top: 20px">{{category.description}}</div>
         </div>
       </div>
+                <div class="footer" style="margin-left:20px">
+            <div class="row pull left"><div class="col-xs-10"></div>
+              <div class="col-lg-4">
+                <i class="now-ui-icons tech_mobile"></i>&nbsp;
+                <span style="font-size:1em;"><strong>{{category.phone}}</strong></span>
+              </div>
+                <div class="col-lg-4">
+                <i class="now-ui-icons business_globe"></i>&nbsp;
+                <span style="font-size:1em"><strong>{{category.webUrl?category.webUrl:'No website'}}</strong></span>
+              </div>
+              <div class="col-lg-4">
+                <span style="font-size:1em">
+                  <i class="now-ui-icons location_pin"></i> &nbsp;<strong>{{category.address.zip}}</strong></span></div>
+            </div>
+          </div>
     </div>
     <!-- Container -->
   </div>
@@ -33,6 +40,10 @@ import { Card } from '../components';
 export default {
   components: {
     Card
+  },
+  props: {
+    categoryId: String,
+    cityName: String
   },
   data() {
     return {
@@ -112,7 +123,11 @@ export default {
   methods: {
     loadData() {
       http
-        .post('https://slamsbox.com/api/find_activities')
+        .get(
+          'http://slamsbox-server.herokuapp.com/api/categories/' +
+            this.$props.categoryId +
+            '/providers'
+        )
         .then(response => (this.searchresults = response.data))
         .catch(e => {
           this.errors.push(e);
@@ -227,5 +242,9 @@ body {
   line-height: 1.44444em !important;
   color: rgb(72, 72, 72) !important;
   margin: 0px !important;
+}
+
+.starter-page {
+  min-height: calc(100vh - 95px);
 }
 </style>
