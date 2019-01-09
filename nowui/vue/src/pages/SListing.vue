@@ -124,7 +124,7 @@ export default {
     loadData() {
       http
         .get(
-          'http://slamsbox-server.herokuapp.com/api/categories/' +
+          'https://slamsbox-server.herokuapp.com/api/categories/' +
             this.$props.categoryId +
             '/providers'
         )

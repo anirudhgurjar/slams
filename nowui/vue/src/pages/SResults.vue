@@ -134,7 +134,7 @@ export default {
     loadData() {
       console.log('dh=' + (this.addressData));
       http
-        .get('http://slamsbox-server.herokuapp.com/search/city/' + this.addressData)
+        .get('https://slamsbox-server.herokuapp.com/search/city/' + this.addressData)
         .then( (response)=> {
           this.searchresults = response.data;
         })
