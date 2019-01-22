@@ -1,6 +1,13 @@
 <template>
-  <div class="container">
+  <div class="container" style="background-image:none !important;">
     <!--/sidebar-nav-fixed -->
+    <h5>{{cityNameFromRoute}}</h5>
+
+    <h3>
+      <strong>{{categoryNameFromRoute}}</strong>
+    </h3>
+    <hr>
+
     <div v-for="category in searchresults" class="myPanel" style="max-width: 42rem;">
       <div class="row">
         <div class="col-md-5">
@@ -9,108 +16,183 @@
         <div class="col-md-6">
           <div class="row">
             <div class="lib-header-seperator"></div>
-            <h2 class="header-font">{{category.name}}</h2>
+            <h2 class="header-font">
+              <a href="#" v-on:click.stop="navigate(category)">{{category.name}}</a>
+            </h2>
           </div>
           <div class="row" style="padding-top: 20px">{{category.description}}</div>
         </div>
       </div>
-                <div class="footer" style="margin-left:20px">
-            <div class="row pull left"><div class="col-xs-10"></div>
-              <div class="col-lg-4">
-                <i class="now-ui-icons tech_mobile"></i>&nbsp;
-                <span style="font-size:1em;"><strong>{{category.phone}}</strong></span>
-              </div>
-                <div class="col-lg-4">
-                <i class="now-ui-icons business_globe"></i>&nbsp;
-                <span style="font-size:1em"><strong>{{category.webUrl?category.webUrl:'No website'}}</strong></span>
-              </div>
-              <div class="col-lg-4">
-                <span style="font-size:1em">
-                  <i class="now-ui-icons location_pin"></i> &nbsp;<strong>{{category.address.zip}}</strong></span></div>
-            </div>
+      <div class="footer" style="margin-left:20px">
+        <div class="row pull left">
+          <div class="col-xs-10"></div>
+          <div class="col-lg-4">
+            <i class="now-ui-icons tech_mobile"></i>&nbsp;
+            <span style="font-size:1em;">
+              <strong>{{category.phone}}</strong>
+            </span>
           </div>
+          <div class="col-lg-4">
+            <a v-bind:href="category.webURL" target="_new">
+              <i class="now-ui-icons business_globe"></i>&nbsp;
+              <span style="font-size:1em">
+                <strong>Website</strong>
+              </span>
+            </a>
+          </div>
+          <div class="col-lg-4">
+            <span style="font-size:1em">
+              <i class="now-ui-icons location_pin"></i> &nbsp;
+              <strong>{{category.address.zip}}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-ceter">
+      <button class="danger" @click="backToResukts()">Back to Results</button>
     </div>
     <!-- Container -->
+    <div>
+      <Modal
+        :show.sync="modals.classic"
+        headerClasses="justify-content-center"
+        modal-classes="modal-lg"
+      >
+        <div class="container">
+          <!-- Page Header -->
+          <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+            <div class="overlay"></div>
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                  <div class="post-heading">
+                    <h1>{{provider.name}}</h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row d-flex justify-content-center" style="margin:2rem;">
+              <img v-bind:src="provider.logoURL">
+            </div>
+          </header>
+
+          <article>
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-10">
+                  <div class="col-lg-8 col-md-10 mx-auto">
+                    <h2 class="section-heading">About Us</h2>
+                    <p>{{provider.description}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+          <hr>
+          <footer>
+            <div class="row">
+              <div class="col">
+                <b>Contact Details:</b>
+                <br>
+                Phone: {{provider.phone}}
+                <br>
+                <a href="mailto:support@mysite.com">{{provider.email}}</a>
+                <br>
+                <br>
+              </div>
+              <div class="col">
+                <strong>Address:</strong>
+                <br>
+                {{provider.address.streetAddress1}}
+                <br>
+                {{provider.address.streetAddress2}}
+                <br>
+                {{provider.address.city}}
+                <br>
+                {{provider.address.state}} ,{{provider.address.zip}}
+              </div>
+              <div class="col">
+                <b>Website:</b>
+                <br>
+                <a href="provider.webURL">{{provider.webURL}}</a>
+                <br>
+              </div>
+            </div>
+          </footer>
+          <hr>
+
+          <footer>
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                  <ul class="list-inline text-center">
+                    <li class="list-inline-item">
+                      <a href="#">
+                        <span class="fa-stack fa-lg">
+                          <i class="fas fa-circle fa-stack-2x"></i>
+                          <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a href="#">
+                        <span class="fa-stack fa-lg">
+                          <i class="fas fa-circle fa-stack-2x"></i>
+                          <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                    <li class="list-inline-item">
+                      <a href="#">
+                        <span class="fa-stack fa-lg">
+                          <i class="fas fa-circle fa-stack-2x"></i>
+                          <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </Modal>
+    </div>
   </div>
 </template>
 <script>
 import http from 'axios';
 import { Card } from '../components';
+import router from '../router.js';
+import { API_HOST } from './endpoints.js';
+import { Modal } from '../components';
 
 export default {
   components: {
-    Card
+    Card,
+    Modal
   },
   props: {
     categoryId: String,
-    cityName: String
+    cityName: String,
+    statedata: {}
   },
   data() {
     return {
       searchresults: {},
       errors: {},
+      providerDetails: {},
       addressData: {},
-      dummyResponse: {
-        data: [
-          {
-            id: 1,
-            categoryName: 'Sports',
-            subCateGory: [
-              {
-                id: 1,
-                name: 'Swimming',
-                img: 'swim.jpg'
-              },
-              {
-                id: 2,
-                name: 'Tennis',
-                img: 'tennis.png'
-              },
-              {
-                id: 2,
-                name: 'soccer',
-                img: 'soccer.png'
-              },
-              {
-                id: 4,
-                name: 'Sketting',
-                img: 'sket.jpg'
-              }
-            ]
-          },
-          {
-            id: 2,
-            categoryName: 'Music',
-            subCateGory: [
-              {
-                id: 1,
-                name: 'Gitar',
-                img: 'gitar.png'
-              },
-              {
-                id: 2,
-                name: 'Piano',
-                img: 'piano.png'
-              }
-            ]
-          },
-          {
-            id: 3,
-            categoryName: 'Other Activities',
-            subCateGory: [
-              {
-                id: 1,
-                name: 'Dance',
-                img: 'dance.png'
-              },
-              {
-                id: 2,
-                name: 'Drama',
-                img: 'drama.jpg'
-              }
-            ]
-          }
-        ]
+      categoryIdFromRoute: {},
+      categoryNameFromRoute: {},
+      cityNameFromRoute: {},
+      statedata: {},
+      modals: {
+        classic: false
+      },
+      provider: {
+        address: {}
       }
     };
   },
@@ -119,13 +201,18 @@ export default {
   },
   created() {
     this.addressData = this.$route.params.addressData;
+    this.categoryIdFromRoute = this.$route.params.categoryId;
+    this.categoryNameFromRoute = this.$route.params.categoryName;
+    this.cityNameFromRoute = this.$route.params.cityName;
   },
   methods: {
     loadData() {
       http
         .get(
-          'https://slamsbox-server.herokuapp.com/api/categories/' +
-            this.$props.categoryId +
+          // 'http://localhost:3000/api/categories/' +
+          API_HOST +
+            '/api/categories/' +
+            this.categoryIdFromRoute +
             '/providers'
         )
         .then(response => (this.searchresults = response.data))
@@ -136,16 +223,46 @@ export default {
     },
     getImgUrl(pic) {
       return require('../../public/img/' + pic);
+    },
+    navigate(category) {
+      // alert(JSON.stringify(category));
+      // let routeData = router.resolve({name: 'spvdetails', params: { providerDetails: category }});
+      // alert(routeData.href);
+      // window.open(routeData.href, '_blank');
+
+      //  router.push({name: 'spvdetails', params: { providerDetails: category }});
+      this.provider = category;
+      this.modals.classic = true;
+    },
+    backToResukts() {
+      router.push({
+        name: 'scategorygroup',
+        params: {
+          statedata: this.$route.params.statedata,
+          searchresults: this.$route.params.searchresults
+        }
+      });
+    },
+    showmodel() {
+      this.modals.classic = true;
     }
   }
 };
 </script>
 
 <style>
-body {
+/* body {
   padding: 20px;
   font-family: 'Open Sans', sans-serif;
-  background-color: #f7f7f7;
+  /* background-color: #f7f7f7; }*/
+*/ .container1 {
+  background: none !important;
+}
+
+.container-fluid {
+  background: none !important;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .panel {

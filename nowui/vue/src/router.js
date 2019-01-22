@@ -10,6 +10,8 @@ import SLanding from './pages/SLanding.vue';
 import Sresults from './pages/SResults.vue';
 import Slisting from './pages/SListing.vue';
 import Menu from './pages/Menu.vue';
+import SPVDetails from './pages/SProviderDetails.vue';
+import Scategorygroup from './pages/SCategoryGroupList.vue';
 
 Vue.use(Router);
 
@@ -56,16 +58,38 @@ export default new Router({
       name: 'sresults',
       components: { default: Sresults, header:Menu },
       props : {
-        addressData:{}
+        addressData:{},
+        statedata:{}
       },
     }, {
       path: '/slisting',
       name: 'slisting',
       components: { default: Slisting, header:Menu },
       props : {
-        addressData:{}
-      },
-    }
+        addressData:{},
+        categoryId:{},
+        categoryName:{},
+        cityName:{},
+        statedata:{},
+        searchresults:{}
+      }
+    },{
+      path: '/spvdetails',
+      name: 'spvdetails',
+      components: { default: SPVDetails, header:Menu },
+      props : {
+        providerDetails:{},        
+    },
+  },{
+    path: '/scategorygroup',
+    name: 'scategorygroup',
+    components: { default: Scategorygroup, header:Menu },
+    props : {
+      addressData:{},
+      statedata:{},
+      searchresults:{}
+    },
+  },
   ],
   scrollBehavior: to => {
     if (to.hash) {

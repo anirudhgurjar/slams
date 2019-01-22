@@ -1,5 +1,4 @@
 <template>
-<!-- Not Used -->
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-1">
@@ -9,16 +8,26 @@
         <div class="header">
           <h5
             style="font-family: Circular, -apple-system, BlinkMacSystemFont, Roboto,'Helvetica Neue', sans-serif !important;" >
-            Found {{searchresults.length}} Activites Near :&nbsp;
+            <!-- Found {{searchresults.length}} Activites Near :&nbsp; -->
+           We have found {{searchresults.length}} {{(searchresults.length==1)?'Activity':'Activities'}} Near :&nbsp;
             <strong>{{this.addressData}}</strong>
           </h5>
-        </div>{{searchresultsGrouped}}<br>{{searchresults}}
-        <div v-for="category in searchresults">
+        </div>
+        <div v-for="(list, key) in Array.from(searchresultsGrouped)">
           <h4 style>
-            <strong>{{category.categoryName}}</strong>
+            <strong>{{list[0]}}</strong>
           </h4>
-
-          <subCateGory v-bind:categoryId="category.id" v-bind:statedata="this.searchresultsGrouped" v-bind:psearchresults="this.searchresults"/>
+          <hr>
+          <div clas v-for="obj in list[1]">
+                <div class="card" style="width: 18rem;">
+                     <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                     <div class="card-body">
+                         <h5 class="card-title">    
+                             <a href="#" v-on:click.stop="navigate(obj.id,obj.categoryName)">{{obj.categoryName}}</a>
+                         </h5>
+                     </div>
+                </div>
+          </div>
         </div>
       </div>
     </div>
@@ -55,6 +64,7 @@ import subCateGory from './SListing';
 import dh from './endpoints.js';
 import Mapper from './CategoryMapper.js';
 import {API_HOST} from './endpoints.js';
+import router from '../router.js'
 
 export default {
   components: {
@@ -68,11 +78,11 @@ export default {
       allCategoryData :[],
       errors: {},
       addressData: {},
-      dataFromPrevScreeen :{}
+      categoryDispData:{}
     };
   },
   mounted() {
-    if(!this.$route.params.statedata){
+  if(!this.$route.params.statedata){
       this.loadData();
     }else{           
       this.searchresultsGrouped= this.$route.params.statedata;//Mapper.groupBy(this.$route.params.statedata, p=> p.parent_id,catData.data); 
@@ -86,6 +96,7 @@ export default {
   },
   methods: {
     loadData() {
+
         http.get(API_HOST + '/api/categories/')
         .then(catData => {
           http
@@ -95,6 +106,9 @@ export default {
           this.searchresultsGrouped=Mapper.groupBy(this.searchresults, p=> p.parent_id,catData.data);
         console.log('Got data=');
         console.log(JSON.stringify(this.searchresultsGrouped));
+        this.searchresultsGrouped.forEach(element => {
+            console.log(JSON.stringify(element));
+        });
         })
         .catch(e => {
           //this.errors.push(e);
@@ -117,11 +131,9 @@ export default {
 
 
     },
-    getImgUrl(pic) {
-      return require('../../public/img/' + pic);
-    },
-    navigate() {
-      alert('navigated');
+    navigate(ctId,ctName){
+      // alert(JSON.stringify(category));
+       router.push({name: 'slisting', params: { categoryId: ctId , categoryName :ctName,cityName:this.addressData, statedata:this.searchresultsGrouped,searchresults:this.searchresults}});
     }
   }
 };

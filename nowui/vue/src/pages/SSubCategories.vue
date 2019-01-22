@@ -1,7 +1,7 @@
 <template>
   <div class="starter-page">
     <div class="section text-center">
-          <div v-for="subCategory in searchresults" class="card" style="width: 12rem;padding:2px;">
+          <div v-for="subCategory in searchresults" class="card">
             <img class="card-img-top" v-bind:src="subCategory.logoURL" alt="desc">
             <div class="card-footer">
               <h5 class="card-title">{{subCategory.name}}</h5>
@@ -14,13 +14,15 @@
 
 import http from 'axios';
 
+
 export default {
 props: {
        categoryId : String
    },
  data() {
     return {
-      searchresults: {}
+      searchresults: {},
+      providerDetails:{}
     }
  },
 mounted() {
@@ -29,7 +31,7 @@ mounted() {
  methods: {
     loadData() {
       http
-        .get('http://192.168.0.20:3000/api/categories/'+this.$props.categoryId + '/providers')
+        .get('http://192.168.10.20:3000/api/categories/'+this.$props.categoryId + '/providers')
         .then(response => (this.searchresults = response.data))
         .catch(e => {
           //this.errors.push(e);
@@ -38,6 +40,10 @@ mounted() {
     },
     getImgUrl(pic) {
          return require('../../public/img/'+pic)
+    },
+    naviate(){
+      alert('clicked');
+      //router --name: 'spvdetails', params: { providerDetails: this.providerDetails }
     }
 }
   };
