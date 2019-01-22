@@ -66,6 +66,7 @@ import Mapper from './CategoryMapper.js';
 import {API_HOST} from './endpoints.js';
 import router from '../router.js'
 
+
 export default {
   components: {
     subCateGory
@@ -100,7 +101,7 @@ export default {
         http.get(API_HOST + '/api/categories/')
         .then(catData => {
           http
-        .get('http://localhost:3000/search/city/' + this.addressData)
+        .get(API_HOST +'/search/city/' + this.addressData)
         .then(response => {
           this.searchresults = response.data;
           this.searchresultsGrouped=Mapper.groupBy(this.searchresults, p=> p.parent_id,catData.data);
