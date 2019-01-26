@@ -25,14 +25,14 @@ class CategoryMapper {
        groupBy(list, keyGetter,allCategoryData) {
         const map = new Map();
         list.forEach((item) => {
-            const key = keyGetter(item);
-            const collection = map.get(key);
-            if (!collection) {
-                const catObject=allCategoryData.filter(function(e) {
-                    if(e.id == key){
-                        return e.categoryName;
-                    };
-                  });
+            const key = keyGetter(item);            ;
+            const catObject=allCategoryData.filter(function(e) {
+                if(e.id == key){
+                    return e.categoryName;
+                };
+              });
+            const collection = map.get(catObject[0].categoryName);
+            if (!collection) {               
                 map.set(catObject[0].categoryName, [item]);
             } else {
                 collection.push(item);

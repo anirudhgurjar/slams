@@ -18,15 +18,17 @@
             <strong>{{list[0]}}</strong>
           </h4>
           <hr>
-          <div clas v-for="obj in list[1]">
+          <div class="card-deck">
+          <div v-for="obj in list[1]">
                 <div class="card" style="width: 18rem;">
-                     <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                     <div class="card-body">
+                     <img class="card-img" src="https://picsum.photos/150" alt="Card image cap">
+                     <div class="card-img-overlay  d-flex flex-column justify-content-end">
                          <h5 class="card-title">    
-                             <a href="#" v-on:click.stop="navigate(obj.id,obj.categoryName)">{{obj.categoryName}}</a>
+                             <a href="#" v-on:click.stop="navigate(obj.id,obj.categoryName)"><strong class="strong">{{obj.categoryName}}</strong></a>
                          </h5>
                      </div>
                 </div>
+          </div>
           </div>
         </div>
       </div>
@@ -168,4 +170,13 @@ export default {
 .starter-page {
   min-height: calc(100vh - 95px);
 }
+
+.card-img{
+  opacity: 0.8;
+}
+
+.strong{
+  color: aliceblue;
+}
+
 </style>

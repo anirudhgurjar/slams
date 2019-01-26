@@ -57,13 +57,15 @@
       <Modal
         :show.sync="modals.classic"
         headerClasses="justify-content-center"
-        modal-classes="modal-lg"
-      >
+        modal-classes="modal-lg" >
+        
+         <button class="btn btn-danger" @click="hideModal()">Close</button>
+         
         <div class="container">
           <!-- Page Header -->
           <header class="masthead" style="background-image: url('img/post-bg.jpg')">
             <div class="overlay"></div>
-            <div class="container">
+            <div class="container-fluid">
               <div class="row">
                 <div class="col-lg-8 col-md-10 mx-auto">
                   <div class="post-heading">
@@ -78,7 +80,7 @@
           </header>
 
           <article>
-            <div class="container">
+            <div class="container-fluid">
               <div class="row">
                 <div class="col-lg-10">
                   <div class="col-lg-8 col-md-10 mx-auto">
@@ -245,6 +247,9 @@ export default {
     },
     showmodel() {
       this.modals.classic = true;
+    },
+    hideModal(){
+      this.modals.classic = false;
     }
   }
 };
@@ -364,4 +369,9 @@ export default {
 .starter-page {
   min-height: calc(100vh - 95px);
 }
+
+.modal-lg{
+  max-width: 70% !important;
+}
+
 </style>
