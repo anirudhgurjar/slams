@@ -71,7 +71,8 @@ export default new Router({
         categoryName:{},
         cityName:{},
         statedata:{},
-        searchresults:{}
+        searchresults:{},
+        parentCtID:{}
       }
     },{
       path: '/spvdetails',

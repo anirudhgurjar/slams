@@ -1,14 +1,32 @@
 <template>
-  <div class="container" style="background-image:none !important;">
+  <div class="container-fluid" style="background-image:none !important;">
     <!--/sidebar-nav-fixed -->
+    <div class="row"></div>
+
     <h5>{{cityNameFromRoute}}</h5>
 
     <h3>
       <strong>{{categoryNameFromRoute}}</strong>
     </h3>
     <hr>
-
-    <div v-for="category in searchresults" class="myPanel" style="max-width: 42rem;">
+    <div style="float:right; width:58%;:red">
+      <div style="position: fixed">
+        <!-- <iframe
+  width="330%"
+  height="600"
+  frameborder="0" style="border:0"
+  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqeMsRW_Fyaf04IW_wps_JmEE_WaH5gk&q=L6X5E4" allowfullscreen>
+        </iframe>-->
+          <div id="mymaps" style="margin-left:3rem;height: 600px;width:800px">
+      <div style="height:600px;width:800px;background:red">abcx</div>
+    </div>
+      </div>
+    </div>
+    <div
+      v-for="category in searchresults"
+      class="myPanel"
+      style="max-width: 42rem;position:absolute"
+    >
       <div class="row">
         <div class="col-md-5">
           <img v-bind:src="category.logoURL">
@@ -52,15 +70,16 @@
     <div class="text-ceter">
       <button class="danger" @click="backToResukts()">Back to Results</button>
     </div>
+  
     <!-- Container -->
     <div>
       <Modal
         :show.sync="modals.classic"
         headerClasses="justify-content-center"
-        modal-classes="modal-lg" >
-        
-         <button class="btn btn-danger" @click="hideModal()">Close</button>
-         
+        modal-classes="modal-lg"
+      >
+        <button class="btn btn-danger" @click="hideModal()">Close</button>
+
         <div class="container">
           <!-- Page Header -->
           <header class="masthead" style="background-image: url('img/post-bg.jpg')">
@@ -169,6 +188,7 @@ import { Card } from '../components';
 import router from '../router.js';
 import { API_HOST } from './endpoints.js';
 import { Modal } from '../components';
+import $ from 'jquery';
 
 export default {
   components: {
@@ -182,7 +202,7 @@ export default {
   },
   data() {
     return {
-      searchresults: {},
+      searchresults: [],
       errors: {},
       providerDetails: {},
       addressData: {},
@@ -206,22 +226,74 @@ export default {
     this.categoryIdFromRoute = this.$route.params.categoryId;
     this.categoryNameFromRoute = this.$route.params.categoryName;
     this.cityNameFromRoute = this.$route.params.cityName;
+    $(window).on('popstate', function() {
+     this.backToResukts();
+    });
   },
   methods: {
     loadData() {
-      http
+      let tmpProviders=this.$route.params.searchresults.categories[this.$route.params.parentCtID].childCategories[this.categoryIdFromRoute].providers;
+      let cat;
+      for(cat in tmpProviders){
+           http
         .get(
           // 'http://localhost:3000/api/categories/' +
           API_HOST +
-            '/api/categories/' +
-            this.categoryIdFromRoute +
-            '/providers'
-        )
-        .then(response => (this.searchresults = response.data))
-        .catch(e => {
-          this.errors.push(e);
-          console.log('Errors' + e);
-        });
+            '/api/providers/' +
+            cat )
+        .then(response => {
+          this.searchresults.push(response.data);
+          let res = response.data;
+          var i = 0;
+          let marker;
+       //   for (i = 0; i <= res.length - 1; i++) {
+            console.log(res.address.latitude);
+            console.log(res.address.longitude);
+            marker = new google.maps.Marker({position: {lat:parseFloat(res.address.latitude) , lng: parseFloat(res.address.longitude)}, map: this.map,title:res.name});
+            this.map.setCenter(marker.getPosition());
+         // }
+          
+        })
+      }
+      // http
+      //   .get(
+      //     // 'http://localhost:3000/api/categories/' +
+      //     API_HOST +
+      //       '/api/categories/' +
+      //       this.categoryIdFromRoute +
+      //       '/providers'
+      //   )
+      //   .then(response => {
+      //     this.searchresults = response.data;
+      //     let res = response.data;
+      //     var i = 0;
+      //     let marker;
+      //     for (i = 0; i <= res.length - 1; i++) {
+      //       console.log(res[i].address.latitude);
+      //       console.log(res[i].address.longitude);
+      //       marker = new google.maps.Marker({position: {lat:parseFloat(res[i].address.latitude) , lng: parseFloat(res[i].address.longitude)}, map: this.map});
+      //     }
+      //     this.map.setCenter(marker.getPosition());
+      //   })
+      //   .catch(e => {
+      //     //   this.errors.push(e);
+      //     console.log('Errors' + e);
+      //   });
+      console.log('map: ', google.maps);
+      document.getElementById('mymaps').innerHTML = '<h1>Loading maps</h1>';
+      this.map = new google.maps.Map(document.getElementById('mymaps'), {
+        center: { lat: 43.7315, lng: -79.7642 },
+        scrollwheel: false,
+        zoom: 17
+      });
+
+      // for(data in this.searchresults){
+      //     console.log(data.address.latitude + " " + data.address.longitude);
+      //      marker = new google.maps.Marker({position: {lat:data.address.latitude , lng: data.address.longitude}, map: this.map});
+      // }
+
+      //var marker = new google.maps.Marker({position: {lat:43.7315, lng: -79.7642}, map: this.map});
+      console.log('Map loaded');
     },
     getImgUrl(pic) {
       return require('../../public/img/' + pic);
@@ -241,14 +313,15 @@ export default {
         name: 'scategorygroup',
         params: {
           statedata: this.$route.params.statedata,
-          searchresults: this.$route.params.searchresults
+          searchresults: this.$route.params.searchresults,
+          addressData:this.$route.params.addressData
         }
       });
     },
     showmodel() {
       this.modals.classic = true;
     },
-    hideModal(){
+    hideModal() {
       this.modals.classic = false;
     }
   }
@@ -370,8 +443,11 @@ export default {
   min-height: calc(100vh - 95px);
 }
 
-.modal-lg{
+.modal-lg {
   max-width: 70% !important;
 }
-
+.maps {
+  height: 300px;
+  width: 100%;
+}
 </style>

@@ -10,35 +10,33 @@
               <span class="btn btn-info">Near</span>
               <input
                 type="text"
+                ref="autocomplete"
                 class="form-control"
                 v-model="address"
+                v-on-change="testSetup()"
                 size="30"
                 style="border:none!important; border-radius: 0px !important;background-color:white!important"
                 placeholder="Postal code"
               >
               <router-link
-                :to="{ name: 'scategorygroup', params: { addressData: this.address } }"
+                :to="{ name: 'scategorygroup', params: { addressData: this.autocompAddr } }"
                 class="btn btn-primary btn"
                 tag="button"
               >Search</router-link>
             </div>
           </form>
           <div class="form-group d-flex justify-content-center">
-           
-              <button class="btn btn-icon  btn-round btn-info">
-                <i class="fab fa-twitter"/>
-              </button>
-           
-           
-              <button class="btn btn-icon btn-round btn-info">
-                <i class="fab fa-facebook"/>
-              </button>
-           
-           
-              <button class="btn btn-icon btn-round btn-danger">
-                <i class="fab fa-google"/>
-              </button>
-           
+            <button class="btn btn-icon btn-round btn-info" v-on:click="openSocial('tw')">
+              <i class="fab fa-twitter"/>
+            </button>
+            
+            <button class="btn btn-icon btn-round" style="background:#39569c" v-on:click="openSocial('fb')">
+              <i class="fab fa-facebook"/>
+            </button>
+            
+            <button class="btn btn-icon btn-round btn-danger" v-on:click="openSocial('gl')">
+              <i class="fab fa-google"/>
+            </button>
           </div>
         </div>
       </div>
@@ -47,11 +45,66 @@
 </template>
 <script>
 export default {
-    data() {
-        return {
-          address:""
-        }
+  beforeCreate() {
+   setupGoogle();
+  },
+  data() {
+    return {
+      address: '',
+      autocompAddr: {
+        city: '',
+        lat: '',
+        lon: ''
+      },
+      isGoogleLoaded:false,
+    };
+  },
+  methods: {
+    testSetup() {
+      if(this.isGoogleLoaded){
+        return;
+      }else if(typeof google ==='undefined'){ 
+        return;
+      }else{
+        this.setupGoogle();
+      }
     },
+    setupGoogle() {    
+      this.autocomplete = new google.maps.places.Autocomplete(
+        this.$refs.autocomplete,
+        { types: ['geocode'] }
+      );
+      this.autocomplete.addListener('place_changed', () => {
+        let place = this.autocomplete.getPlace();
+        let ac = place.address_components;
+        let lat = place.geometry.location.lat();
+        let lon = place.geometry.location.lng();
+        let city = ac[0]['short_name'];
+        this.autocompAddr.city = city;
+        this.autocompAddr.lat = lat;
+        this.autocompAddr.lon = lon;
+        console.log(JSON.stringify(this.autocompAddr));
+      });
+      this.isGoogleLoaded=true;
+    },
+    whenGoogleLoadedDo(fnt) {
+      if (typeof google != 'undefined') fnt();
+      else
+        setTimeout(function() {
+          (function(fnt) {
+            this.whenGoogleLoadedDo(fnt);
+          })(fnt);
+        }, 1000); // You can set timer as you wish //
+    },
+    openSocial(channel){
+      if(channel=='tw')
+        window.open('http://twitter.com/slamsbox');
+       else if(channel== 'fb') 
+        window.open('http://facebook.com/slamsbox');
+       else if(channel=== 'gl') 
+        window.open('http://google.com/slamsbox');
+    }
+  }
 };
 </script>
 
@@ -64,7 +117,7 @@ export default {
 .container-fluid1 {
   background: url('../../public/img/background.jpg') !important;
   background-repeat: no-repeat;
-  background-size: cover; 
+  background-size: cover !important;
 }
 h2 {
   font-size: 24px;
