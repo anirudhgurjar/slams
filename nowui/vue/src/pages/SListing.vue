@@ -341,6 +341,8 @@ export default {
   background: none !important;
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 773px !important;
+   min-width: 667px !important;
 }
 
 .panel {
@@ -450,4 +452,11 @@ export default {
   height: 300px;
   width: 100%;
 }
+@media screen {
+  #mymaps {
+    visibility: hidden;   
+  }
+}
+
+
 </style>

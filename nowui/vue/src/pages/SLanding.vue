@@ -118,6 +118,8 @@ export default {
   background: url('../../public/img/background.jpg') !important;
   background-repeat: no-repeat;
   background-size: cover !important;
+   min-height: 577px !important;
+   min-width: 667px !important;
 }
 h2 {
   font-size: 24px;
